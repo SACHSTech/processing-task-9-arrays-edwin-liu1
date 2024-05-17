@@ -11,31 +11,47 @@ public class Sketch extends PApplet {
 
   public void settings() {
 	// put your size call here
-    size(400, 400);
+    size(1000, 800);
   }
 
-  Snowball ball = new Snowball(); Objects.Snowball ball = (100, 100, 0, 0, 10, 0);
   /** 
    * Called once at the beginning of execution.  Add initial set up
    * values here i.e background, stroke, fill etc.
    */
   
   public void setup() {
-    background(210, 255, 173);
+    background(65);
+    snowballs.add(new Objects.Snowball (500,400,0,0,10,0.2) );
   }
 
   /**
    * Called repeatedly, anything drawn to the screen goes here
    */
   public void draw() {
-	  ball.display();
+    fill (255); stroke(128);
+    for (Objects.Snowball ball : snowballs){
+      ball.update();
+	    displaySnowball(ball);
+    }
   }
   
   public void keyPressed() {
       
   }
 
+  public void mouseClicked(){
+
+  }
+
   public void initalize(){
+
+  }
+
+  public void displaySnowball(Objects.Snowball snowball){
+    circle(snowball.getX(), snowball.getY(), snowball.getR() );
+  }
+
+  public void displayWall(Objects.Wall wall){
 
   }
 }
