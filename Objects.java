@@ -5,26 +5,26 @@ public class Objects{
     static float x, y, velX, velY;
 
     static class Snowball{
-        double r;
+        double d;
         double g;
         boolean hidden = false;
         Snowball (float X, float Y, float XSpeed, float YSpeed, int size, double growth){
             x = X; y = Y;
             velX = XSpeed; velY = YSpeed;
-            r = size; g = growth;
+            d = size; g = growth;
             hidden = false;
         }
         public void hide(){
             hidden = true;
         }
 
-        public void update(){x += velX; y += velY; r += g;}
+        public void update(){x += velX; y += velY; d += g;}
         public void slowDown(){velX /= 2; velY /= 2; g /= 2;}
         public void speedUp(){velX *= 2;velY *= 2; g *= 2;}
 
         public float getX(){return x;}
         public float getY(){return y;}
-        public float getR(){return (float)r;}
+        public float getD(){return (float)d;}
     }
 
     static class Wall{
