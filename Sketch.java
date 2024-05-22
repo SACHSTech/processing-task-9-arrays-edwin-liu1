@@ -23,6 +23,7 @@ public class Sketch extends PApplet {
   int lives = 3;
   double slow = 100;
   double slowChange = 0.05;
+  int slowMulti = 1;
 
   public void settings() {
     size(1000, 800);
@@ -37,13 +38,14 @@ public class Sketch extends PApplet {
     heart = loadImage("Heart.png");
 
     //winds.add(new Objects.Wind(300, 500, 100, 60, 0, 0, -1) );
-    snowballs.add(new Objects.Snowball(200,100,0,0,10,0.2) );
+    snowballs.add(new Objects.Snowball(200,100,0,(float)0.4,10,0.2) );
   }
 
   /**
    * Called repeatedly, anything drawn to the screen goes here
    */
   public void draw() {
+    if (lives > 0){
     background(0);
 
     if (slow <= 0){}
@@ -53,9 +55,7 @@ public class Sketch extends PApplet {
 
     fill (255); stroke(128);
     for (Objects.Snowball snow : snowballs){
-      if (offScreen(snow.getX(), snow.getY(), snow.getD() ) ){
-        snowballs.remove(snow);
-      }
+      if (offScreen(snow.getX(), snow.getY(), snow.getD() ) ){snowballs.remove(snow);}
       snow.update();
 	    displaySnowball(snow);
     }
@@ -66,8 +66,10 @@ public class Sketch extends PApplet {
       displayWind(wind);
     }
 
+    updateSlow();
     displaySlow();
     displayLife(lives);
+    } else{background(255);}
   }
   
   public void keyPressed() {
@@ -82,11 +84,17 @@ public class Sketch extends PApplet {
     if ('a' == key || 'd' == key){pVelX = 0;}
 
     if (keyCode == DOWN){
+      if (-1 == slowMulti){slowMulti = 1;}
+      else if (slowMulti < 1){slowMulti /= 2;}
+      else {slowMulti *= 2;}
       for (Objects.Snowball snow : snowballs){snow.speedUp();}
       for (Objects.Wall wall : walls){wall.speedUp();}
       for (Objects.Wind wind : winds){wind.speedUp();}
     }
     if (keyCode == UP){
+      if (1 == slowMulti){slowMulti = -1;}
+      else if (slowMulti > 1){slowMulti /= 2;}
+      else {slowMulti *= 2;}
       for (Objects.Snowball snow : snowballs){snow.slowDown();}
       for (Objects.Wall wall : walls){wall.slowDown();}
       for (Objects.Wind wind : winds){wind.slowDown();}
@@ -95,9 +103,9 @@ public class Sketch extends PApplet {
 
   public void mousePressed(){
     clicked = true;
-    for (Objects.Snowball ball : snowballs){
-      if (collision(mouseX, ball.getX(), mouseY, ball.getY(), ball.getD(), 0)){
-        ball.hide();
+    for (Objects.Snowball snow : snowballs){
+      if (collision(mouseX, snow.getX(), mouseY, snow.getY(), snow.getD(), 0) && !snow.hidden){
+        snow.hide();
         if (slow < 100){
           slow += 1;
         }
@@ -107,6 +115,14 @@ public class Sketch extends PApplet {
 
   public void mouseReleased(){
     clicked = false;
+  }
+
+  // object methods go below here
+  public void spawnSnowball(){
+    float startX = random(0, width);
+    float startSize = random( (float)(Math.sqrt(millis()/1000) ), (float)(4 * Math.sqrt(millis() / 1000) ) );
+    float startY = -startSize / 2;
+    snowballs.add(new Snowball(startX, startY, pSpeed, pSpeed, DISABLE_OPTIMIZED_STROKE, ARROW));
   }
 
   // display methods go below here
@@ -147,7 +163,7 @@ public class Sketch extends PApplet {
   // player methods go below here
   public void updatePlayer(){
     for (Objects.Snowball snow : snowballs){
-      if (collision(pX, snow.getX(), pY, snow.getY(), 15, snow.getD() / 2 ) && (millis() - lastDamaged > 3000) ){
+      if (collision(pX, snow.getX(), pY, snow.getY(), 15, snow.getD() / 2 ) && (millis() - lastDamaged > 3000) && !snow.hidden ){
         lives -= 1;
         lastDamaged = millis();
         slow = 100;
@@ -178,6 +194,20 @@ public class Sketch extends PApplet {
     rect(825, 80, 165, 20);
     fill(0,0,200); stroke(255);
     rect(827, 82, (float)(161 * (slow/100) ), 16);
+  }
+
+  public void updateSlow(){
+    slow += slowChange * slowMulti;
+    if (slow < 0){
+      for (; slowMulti <= -1; slowMulti /= 2){
+        for (Objects.Snowball snow : snowballs){snow.speedUp();}
+        for (Objects.Wall wall : walls){wall.speedUp();}
+        for (Objects.Wind wind : winds){wind.speedUp();}
+      }
+      slowMulti = 1;
+      slow = 0;
+    }
+    if (slow > 100){slow = 100;}
   }
 
   // general math methods go below here
