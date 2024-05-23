@@ -2,9 +2,8 @@ import processing.core.PApplet;
 
 public class Objects{
 
-    static float x, y, velX, velY;
-
     static class Snowball{
+        float x, y, velX, velY;
         double d;
         double g;
         boolean hidden = false;
@@ -28,6 +27,7 @@ public class Objects{
     }
 
     static class Wall{
+        float x, y, velX, velY;
         int w, h;
         Wall(float X, float Y, int width, int height, float XSpeed, float YSpeed){
             x = X; y = Y;
@@ -47,6 +47,7 @@ public class Objects{
 
     // probably the most complicated object and it's just for aescthetics
     static class Wind extends PApplet{
+        float x, y, velX, velY;
         static double wind;
         int w, h;
         WindLine[] lines;
@@ -109,6 +110,7 @@ public class Objects{
     }
 
     static class Ice{
+        float x, y, velX, velY;
         int w, h;
         Ice(float X, float Y, int width, int height, float YSpeed){
             x = X; y = Y;
@@ -121,6 +123,7 @@ public class Objects{
     }
 
     static class Health{
+        float x, y, velX, velY;
         Health(float X, float Y, float XSpeed, float YSpeed){
             x = X; y = Y;
             velX = XSpeed; velY = YSpeed;
@@ -128,9 +131,5 @@ public class Objects{
         public void update(){x += velX; y += velY;}
         public void slowDown(){velX /= 2; velY /= 2;}
         public void speedUp(){velX *= 2;velY *= 2;}
-    }
-
-    public static void update(){
-        x += velX; y += velY;
     }
 }
